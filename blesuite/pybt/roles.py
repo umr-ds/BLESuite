@@ -29,7 +29,7 @@ class LECentral:
         self.address = self.stack.addr
         if address_type == RANDOM_DEVICE_ADDRESS:
             if random is not None:
-                self.address = ''.join(map(lambda x: chr(int(x, 16)), random.split(':')))
+                self.address = ''.join([chr(int(x, 16)) for x in random.split(':')])
             else:
                 self.address = os.urandom(6)
             # Static random address
@@ -62,7 +62,7 @@ class LEPeripheral:
 
         if address_type == RANDOM_DEVICE_ADDRESS:
             if random is not None:
-                self.address = ''.join(map(lambda x: chr(int(x, 16)), random.split(':')))
+                self.address = ''.join([chr(int(x, 16)) for x in random.split(':')])
             else:
                 self.address = os.urandom(6)
             # Static random address

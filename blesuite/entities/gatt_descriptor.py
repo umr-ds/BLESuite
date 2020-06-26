@@ -77,7 +77,7 @@ class BLEDescriptor(object):
             return
         type_int = int(self.uuid[:8], 16)
         self.type = type_int
-        if type_int in type_dict.keys():
+        if type_int in list(type_dict.keys()):
             self.type_string = type_dict[type_int]
 
         return
@@ -147,7 +147,7 @@ class BLEDescriptor(object):
         """
         import blesuite.utils.validators as validator
 
-        descriptor_attributes = descriptor_dictionary.keys()
+        descriptor_attributes = list(descriptor_dictionary.keys())
 
         if 'uuid' in descriptor_attributes:
             uuid = validator.validate_attribute_uuid(descriptor_dictionary['uuid'])
@@ -181,7 +181,7 @@ class BLEDescriptor(object):
 
         if 'characteristic_descriptor_attribute_read_permission' in descriptor_attributes:
             permission_dictionary = descriptor_dictionary['characteristic_descriptor_attribute_read_permission']
-            permission_keys = permission_dictionary.keys()
+            permission_keys = list(permission_dictionary.keys())
             if "security_mode" not in permission_keys:
                 mode = None
             else:
@@ -197,7 +197,7 @@ class BLEDescriptor(object):
 
         if 'characteristic_descriptor_attribute_write_permission' in descriptor_attributes:
             permission_dictionary = descriptor_dictionary['characteristic_descriptor_attribute_write_permission']
-            permission_keys = permission_dictionary.keys()
+            permission_keys = list(permission_dictionary.keys())
             if "security_mode" not in permission_keys:
                 mode = None
             else:

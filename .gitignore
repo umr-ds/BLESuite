@@ -11,4 +11,5 @@
 /dist/*
 
 #egg
-/BLESuite.egg-info/*
+blesuite.egg-info/
+bdaddr.cpython-37m-arm-linux-gnueabihf.so

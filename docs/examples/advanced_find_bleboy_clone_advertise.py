@@ -33,8 +33,8 @@ with BLEConnectionManager(adapter, 'central') as connection_manager:
         discovered_devices = connection_manager.get_discovered_devices()
 
         # Decode GAP data into readable values
-        for i in discovered_devices.keys():
-            if i not in readable_discovered_devices.keys():
+        for i in list(discovered_devices.keys()):
+            if i not in list(readable_discovered_devices.keys()):
                 readable_discovered_devices[i] = {}
             if discovered_devices[i][0] == 0:
                 readable_discovered_devices[i]['address_type'] = 'public'
@@ -44,15 +44,15 @@ with BLEConnectionManager(adapter, 'central') as connection_manager:
                 gap = connection_manager.decode_gap_data(str(discovered_devices[i][1][h]))
                 info = connection_manager.generate_gap_data_dict(gap)
 
-                for info_key in info.keys():
+                for info_key in list(info.keys()):
                     readable_discovered_devices[i][info_key] = info[info_key]
 
         # check if target device name found
-        for device in readable_discovered_devices.keys():
-            if ('Complete Local Name' in readable_discovered_devices[device].keys() and
+        for device in list(readable_discovered_devices.keys()):
+            if ('Complete Local Name' in list(readable_discovered_devices[device].keys()) and
                readable_discovered_devices[device]['Complete Local Name'] == target_device_name):
-                print "Found BLEBoy at address: %s with type: %s" % (device,
-                                                                     readable_discovered_devices[device]['address_type'])
+                print("Found BLEBoy at address: %s with type: %s" % (device,
+                                                                     readable_discovered_devices[device]['address_type']))
                 device_found = True
                 target_address = device
                 target_address_type = readable_discovered_devices[device]['address_type']
@@ -66,12 +66,12 @@ with BLEConnectionManager(adapter, 'central') as connection_manager:
     # Timeout reached our device found, stop scanning
     connection_manager.stop_scan()
     if device_found:
-        print "Smart scanning device for clone"
+        print("Smart scanning device for clone")
         connection = connection_manager.init_connection(target_address, target_address_type)
         connection_manager.connect(connection)
         target_device_bledevice = connection_manager.smart_scan(connection)
         successful_scan = True
-        print "Done smart scanning"
+        print("Done smart scanning")
 
 if successful_scan:
 
@@ -82,7 +82,7 @@ if successful_scan:
         if ret == -1:
             raise ValueError('Spoofing failed. Your device may not be supported.')
         else:
-            print "Address spoofed"
+            print("Address spoofed")
 
         # Using distinguishable name for demonstration purposes
         local_name = "BLEBoy-Clone"
@@ -129,7 +129,7 @@ if successful_scan:
 
         connection_manager.start_advertising()
 
-        print "Advertising Started"
+        print("Advertising Started")
 
         timeout_seconds = 15
         start = time.time()
@@ -142,4 +142,4 @@ if successful_scan:
         connection_manager.stop_advertising()
 
 else:
-    print "Scan unsuccessful, cloning failed."
+    print("Scan unsuccessful, cloning failed.")

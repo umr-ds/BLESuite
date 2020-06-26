@@ -63,7 +63,7 @@ class LongTermKeyDatabase:
 
     def is_ltk_in_db(self, address, ediv, rand):
         log.debug("LTK Lookup: Address: %s, ediv: %s, rand:%s" % (address, ediv, rand))
-        print self.long_term_keys
+        print(self.long_term_keys)
         # HACK: When we support full SM and SMP, we will be able to handle private addresses that change,
         # but for now we can do a look-up based on the ediv and rand for LE Legacy pairing
         for entry in self.long_term_keys:
@@ -402,7 +402,7 @@ class SecurityManagerProtocol:
     def get_pairing_parameters_for_connection(self, peer_address):
         peer_address_lower = peer_address.lower()
         log.debug("Getting pairing parameters for connection with %s" % peer_address_lower)
-        if peer_address_lower in self.security_managers.keys():
+        if peer_address_lower in list(self.security_managers.keys()):
             sm = self.security_managers[peer_address_lower]
             io_cap = sm.io_cap
             oob = sm.oob
@@ -440,7 +440,7 @@ class SecurityManagerProtocol:
                                               bond, lesc, keypress, ct2, rfu, max_key_size,
                                               initiator_key_distribution, responder_key_distribution):
         peer_address_lower = peer_address.lower()
-        if peer_address_lower in self.security_managers.keys():
+        if peer_address_lower in list(self.security_managers.keys()):
             sm = self.security_managers[peer_address_lower]
             sm.io_cap = io_cap
             sm.oob = oob
@@ -758,7 +758,7 @@ class SecurityManagerProtocol:
     def initiate_security_manager_for_connection(self, peer_addr, peer_addr_type, our_address, our_address_type,
                                                  our_role):
         peer_addr = peer_addr.lower()
-        keys = self.security_managers.keys()
+        keys = list(self.security_managers.keys())
         if peer_addr not in keys:
             sm = SM(self.default_io_cap, self.default_oob, self.default_mitm, self.default_bond,
                     self.default_lesc, self.default_keypress, self.default_ct2, self.default_rfu,
@@ -787,7 +787,7 @@ class SecurityManagerProtocol:
     def initiate_encryption_with_existing_keys(self, address, address_type, connection_handle,
                                                our_address, our_address_type, our_role):
         address = address.lower()
-        keys = self.security_managers.keys()
+        keys = list(self.security_managers.keys())
         if address not in keys:
             self.initiate_security_manager_for_connection(address, address_type, our_address, our_address_type,
                                                           our_role)
@@ -811,7 +811,7 @@ class SecurityManagerProtocol:
     def set_encryption_keys_for_connection(self, addr, addr_type, conn_handle, rand, ediv, ltk, security_mode,
                                            security_level):
         addr = addr.lower()
-        keys = self.security_managers.keys()
+        keys = list(self.security_managers.keys())
         if addr not in keys:
             #create new sm object
             sm = SM(self.default_io_cap, self.default_oob, self.default_mitm, self.default_bond,
@@ -831,7 +831,7 @@ class SecurityManagerProtocol:
         self.stack.set_encryption(conn_handle, rand, ediv, ltk)
 
     def has_encryption_ltk_for_address(self, peer_address):
-        return ((peer_address.lower() in self.security_managers.keys()) and
+        return ((peer_address.lower() in list(self.security_managers.keys())) and
                 self.security_managers[peer_address].rLtk is not None)
 
     def send_ltk(self, connection_handle, rand, ediv, peer_address):
@@ -873,7 +873,7 @@ class SecurityManagerProtocol:
             sm.set_security_mode_mode(1)
 
     def get_connection_encryption_status(self, connection_handle):
-        if connection_handle in self.encrypted_connections.keys():
+        if connection_handle in list(self.encrypted_connections.keys()):
             return self.encrypted_connections[connection_handle]
         return False
 
@@ -1154,7 +1154,7 @@ class SecurityManagerProtocol:
 
     def is_pairing_in_progress(self, peer_address):
         peer_address = peer_address.lower()
-        if peer_address not in self.security_managers.keys():
+        if peer_address not in list(self.security_managers.keys()):
             return False
         return self.security_managers[peer_address].pairing_initiated
 

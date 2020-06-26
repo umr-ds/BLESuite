@@ -1,6 +1,6 @@
 import argparse
 from blesuite.connection_manager import BLEConnectionManager
-from blesuite_wrapper import ble_service_read, ble_service_read_async, ble_service_write, \
+from .blesuite_wrapper import ble_service_read, ble_service_read_async, ble_service_write, \
     ble_handle_subscribe, ble_service_scan, ble_service_write_async, ble_run_smart_scan
 from blesuite import utils
 from blesuite.utils.print_helper import print_data_and_hex
@@ -40,10 +40,10 @@ def parse_command():
                                                  'testing BTLE devices on the application layer.')  # ,
     # formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument('command', metavar='command', type=str, nargs=1,
-                        action='store', choices=cmd_choices.keys(),
+                        action='store', choices=list(cmd_choices.keys()),
                         help='BLESuite command you would like to execute.' +
                              'The following are the currently supported commands:\n' +
-                             '\n'.join(['\033[1m{}\033[0m: {}'.format(k, v) for k, v in cmd_choices.iteritems()]))
+                             '\n'.join(['\033[1m{}\033[0m: {}'.format(k, v) for k, v in cmd_choices.items()]))
 
     parser.add_argument('--async', action='store_true', help='\033[1m<read, write>\033[0m '
                                                              'Enable asynchronous writing/reading. Any output'
@@ -159,7 +159,7 @@ def process_args(args):
     if command == 'spoof':
         import bdaddr
         if args.address[0] == "":
-            print "Please specify an address to spoof."
+            print("Please specify an address to spoof.")
         else:
             logger.debug("About to spoof to address %s for adapter %s" % (args.address[0], args.adapter[0]))
             ret = bdaddr.bdaddr(("hci"+str(args.adapter[0])), args.address[0])
@@ -167,44 +167,44 @@ def process_args(args):
                 raise ValueError('Spoofing failed. Your device may not be supported.')
 
     if command == 'scan':
-        print "BTLE Scan beginning"
+        print("BTLE Scan beginning")
         with BLEConnectionManager(args.adapter[0], 'central') as connection_manager:
             discovered = connection_manager.scan(timeout)
 
-            print "Discovered:"
-            for i in discovered.keys():
-                print "\t", i, "(public)" if discovered[i][0] == 0 else "(random)"
+            print("Discovered:")
+            for i in list(discovered.keys()):
+                print("\t", i, "(public)" if discovered[i][0] == 0 else "(random)")
                 for h, j in enumerate(discovered[i][1]):
                     gap = connection_manager.decode_gap_data(str(discovered[i][1][h]))
                     info = connection_manager.generate_gap_data_dict(gap)
-                    for k in info.keys():
-                        print "\t\t", k + ":"
-                        print "\t\t\t", info[k]
+                    for k in list(info.keys()):
+                        print("\t\t", k + ":")
+                        print("\t\t\t", info[k])
 
     if command == 'smartscan':
-        print "BTLE Smart Scan beginning"
+        print("BTLE Smart Scan beginning")
         device = ble_run_smart_scan(args.address[0], args.adapter[0],
                                     args.address_type[0], skip_device_info_query=args.skip_device_info_query,
                                     attempt_read=args.smart_read,
                                     timeout=timeout)
 
     if command == 'servicescan':
-        print "BTLE Scanning Services"
+        print("BTLE Scanning Services")
         ble_service_scan(args.address[0], args.adapter[0],
                          args.address_type[0])
 
     if command == 'read':
         if len(args.handles) <= 0 and len(args.uuids) <= 0:
-            print "ERROR: No handles or UUIDs supplied for read operation."
+            print("ERROR: No handles or UUIDs supplied for read operation.")
             return
-        print "Reading value from handle or UUID"
+        print("Reading value from handle or UUID")
         if args.async:
             uuidData, handleData = ble_service_read_async(args.address[0], args.adapter[0],
                                                           args.address_type[0],
                                                           args.handles, args.uuids,
                                                           timeout=timeout)
             for dataTuple in handleData:
-                print "\nHandle:", "0x" + dataTuple[0]
+                print("\nHandle:", "0x" + dataTuple[0])
                 print_data_and_hex(dataTuple[1], False)
                 '''
                 if isinstance(dataTuple[1][0], str):
@@ -212,7 +212,7 @@ def process_args(args):
                 else:
                     utils.print_helper.print_data_and_hex(dataTuple[1][1], False)'''
             for dataTuple in uuidData:
-                print "\nUUID:", dataTuple[0]
+                print("\nUUID:", dataTuple[0])
                 print_data_and_hex(dataTuple[1], False)
                 '''
                 if isinstance(dataTuple[1][0], str):
@@ -224,17 +224,17 @@ def process_args(args):
                                                     args.address_type[0],
                                                     args.handles, args.uuids, timeout=timeout)
             for dataTuple in handleData:
-                print "\nHandle:", "0x" + dataTuple[0]
+                print("\nHandle:", "0x" + dataTuple[0])
                 print_data_and_hex(dataTuple[1], False)
             for dataTuple in uuidData:
-                print "\nUUID:", dataTuple[0]
+                print("\nUUID:", dataTuple[0])
                 print_data_and_hex(dataTuple[1], False)
 
     if command == 'write':
         if len(args.handles) <= 0:
-            print "ERROR: No handles supplied for write operation. Note: Write operation does not support use of UUIDs."
+            print("ERROR: No handles supplied for write operation. Note: Write operation does not support use of UUIDs.")
             return
-        print "Writing value to handle"
+        print("Writing value to handle")
         if args.async:
             logger.debug("Async Write")
             if len(args.data) > 0:
@@ -280,10 +280,10 @@ def process_args(args):
                                                      args.handles, dataSet,
                                                      timeout=timeout)
             for dataTuple in handleData:
-                print "\nHandle:", "0x" + dataTuple[0]
-                print "Input:"
+                print("\nHandle:", "0x" + dataTuple[0])
+                print("Input:")
                 utils.print_helper.print_data_and_hex(dataTuple[2], False, prefix="\t")
-                print "Output:"
+                print("Output:")
                 #if tuple[1][0] is a string, it means our cmdLineToolWrapper removed the GattResponse object
                 #due to a timeout, else we grab the GattResponse and its response data
                 if isinstance(dataTuple[1][0], str):
@@ -292,7 +292,7 @@ def process_args(args):
                     utils.print_helper.print_data_and_hex(dataTuple[1][1].received(), False, prefix="\t")
         else:
             logger.debug("Sync Write")
-            print args.data
+            print(args.data)
             if len(args.data) > 0:
                 handleData = ble_service_write(args.address[0], args.adapter[0],
                                                args.address_type[0],
@@ -336,14 +336,14 @@ def process_args(args):
                                                args.address_type[0],
                                                args.handles, dataSet, timeout=timeout)
             for dataTuple in handleData:
-                print "\nHandle:", "0x" + dataTuple[0]
-                print "Input:"
+                print("\nHandle:", "0x" + dataTuple[0])
+                print("Input:")
                 print_data_and_hex([dataTuple[2]], False, prefix="\t")
-                print "Output:"
+                print("Output:")
                 print_data_and_hex(dataTuple[1], False, prefix="\t")
 
     if command == 'subscribe':
-        print "Subscribing to device"
+        print("Subscribing to device")
         if args.subscribe_timeout[0] is not None:
             timeout = args.subscribe_timeout[0] * 1000
         else:

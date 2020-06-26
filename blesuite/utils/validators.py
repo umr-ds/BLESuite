@@ -119,7 +119,7 @@ def validate_bluetooth_address(address):
     :type: str
     :return: address
     """
-    if isinstance(address, unicode):
+    if isinstance(address, str):
         address = address.encode('ascii')
     if address is not None:
         match = re.search("^[0-9A-Fa-f]{2}:[0-9A-Fa-f]{2}:[0-9A-Fa-f]{2}:[0-9A-Fa-f]{2}:[0-9A-Fa-f]{2}:[0-9A-Fa-f]{2}$"
@@ -135,7 +135,7 @@ def validate_attribute_uuid(uuid):
     if uuid is None:
         raise InvalidUUIDException(uuid)
     # When attribute UUID is read from JSON, it can be encoded as unicode, which will break the UUID class
-    if isinstance(uuid, unicode):
+    if isinstance(uuid, str):
         uuid = uuid.encode('ascii')
     try:
         UUID(uuid)
@@ -190,7 +190,7 @@ def validate_gatt_property(gatt_property):
 
 def validate_ltk(ltk):
     ltk = ltk.lower()
-    if isinstance(ltk, unicode):
+    if isinstance(ltk, str):
         ltk = ltk.encode('ascii')
     try:
         ltk.decode('hex')
@@ -203,7 +203,7 @@ def validate_irk(irk):
     if irk is None:
         irk = "00" * 16
     irk = irk.lower()
-    if isinstance(irk, unicode):
+    if isinstance(irk, str):
         irk = irk.encode('ascii')
     try:
         irk.decode('hex')
@@ -216,7 +216,7 @@ def validate_csrk(csrk):
     if csrk is None:
         csrk = "00" * 16
     csrk = csrk.lower()
-    if isinstance(csrk, unicode):
+    if isinstance(csrk, str):
         csrk = csrk.encode('ascii')
     try:
         csrk.decode('hex')
@@ -227,7 +227,7 @@ def validate_csrk(csrk):
 
 def validate_rand(rand):
     rand = rand.lower()
-    if isinstance(rand, unicode):
+    if isinstance(rand, str):
         rand = rand.encode('ascii')
     try:
         rand.decode('hex')

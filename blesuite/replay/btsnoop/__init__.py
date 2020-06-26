@@ -5,10 +5,10 @@
 #
 import binascii
 import btsnoop.btsnoop as bts
-import bt.hci_cmd as hci_cmd
-import bt.hci_uart as hci_uart
+import blesuite.replay.btsnoop.bt.hci_cmd as hci_cmd
+import blesuite.replay.btsnoop.bt.hci_uart as hci_uart
 
-from android.snoopphone import SnoopPhone
+from .android.snoopphone import SnoopPhone
 
 
 def get_ltk(path=None):
@@ -17,8 +17,8 @@ def get_ltk(path=None):
 	"""
 	records = get_records(path=path)
 	cmds = get_cmds(records)
-	start_enc_cmds = filter(lambda (opcode, length, data): opcode == 0x2019, cmds)
-	ltks = map(lambda (opcode, length, data): binascii.hexlify(data)[-32:], start_enc_cmds)
+	start_enc_cmds = [opcode_length_data for opcode_length_data in cmds if opcode_length_data[0] == 0x2019]
+	ltks = [binascii.hexlify(opcode_length_data1[2])[-32:] for opcode_length_data1 in start_enc_cmds]
 	last_ltk = len(ltks) != 0 and ltks[-1] or ""
 	return "".join(map(str.__add__, last_ltk[1::2] ,last_ltk[0::2]))
 
@@ -29,8 +29,8 @@ def get_rand_addr(path=None):
 	"""
 	records = get_records(path=path)
 	cmds = get_cmds(records)
-	set_rand_addr = filter(lambda (opcode, length, data): opcode == 0x2005, cmds)
-	addrs = map(lambda (opcode, length, data): binascii.hexlify(data)[-12:], set_rand_addr)
+	set_rand_addr = [opcode_length_data2 for opcode_length_data2 in cmds if opcode_length_data2[0] == 0x2005]
+	addrs = [binascii.hexlify(opcode_length_data3[2])[-12:] for opcode_length_data3 in set_rand_addr]
 	last_addr = len(addrs) != 0 and addrs[-1] or ""
 	return "".join(map(str.__add__, last_addr[1::2], last_addr[0::2]))
 
@@ -42,9 +42,9 @@ def get_records(path=None):
 
 
 def get_cmds(records):
-	hci_uarts = map(lambda record: hci_uart.parse(record[4]), records)
-	hci_cmds = filter(lambda (hci_type, hci_data): hci_type == hci_uart.HCI_CMD, hci_uarts)
-	return map(lambda (hci_type, hci_data): hci_cmd.parse(hci_data), hci_cmds)
+	hci_uarts = [hci_uart.parse(record[4]) for record in records]
+	hci_cmds = [hci_type_hci_data for hci_type_hci_data in hci_uarts if hci_type_hci_data[0] == hci_uart.HCI_CMD]
+	return [hci_cmd.parse(hci_type_hci_data4[1]) for hci_type_hci_data4 in hci_cmds]
 
 
 def _pull_log():

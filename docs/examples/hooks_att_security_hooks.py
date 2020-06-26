@@ -22,7 +22,7 @@ class MyCustomATTSecurityHandler(ATTSecurityHook):
                                      connection_permission, authorization_required):
 
         if authorization_required:
-            answer = raw_input("Press y to authorize access to attribute %s with operation %d, else press n followed by enter" % (uuid, att_opcode))
+            answer = input("Press y to authorize access to attribute %s with operation %d, else press n followed by enter" % (uuid, att_opcode))
             if answer == "y":
                 check_passed = True
             else:

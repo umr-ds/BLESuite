@@ -88,7 +88,7 @@ class GATTRequest(object):
         code = self.error_object.ecode
         if isinstance(code, list):
             code = code[0]
-        if code in att.ATT_ERROR_CODE_NAME.keys():
+        if code in list(att.ATT_ERROR_CODE_NAME.keys()):
             return ["Error: %s" % att.ATT_ERROR_CODE_NAME[code]]
         else:
             return ["Unknown Error: %s" % code]
@@ -104,9 +104,9 @@ class SocketHandler(object):
             try:
                 gap = GAP()
                 gap.decode(data)
-                print "GAP: %s" % gap
+                print("GAP: %s" % gap)
             except Exception as e:
-                print e
+                print(e)
                 pass
 
     def generate_response(self, data):
@@ -601,11 +601,11 @@ class Connection(object):
             kind = self.seen.get(addr, (None,))[0]
 
         if kind is None:
-            print "Error: please give address type"
+            print("Error: please give address type")
         else:
-            print "Connecting.."
+            print("Connecting..")
 
-            if conn_handle in self.connection_statuses.keys() and self.connection_statuses[conn_handle] is True:
+            if conn_handle in list(self.connection_statuses.keys()) and self.connection_statuses[conn_handle] is True:
                 log.debug("Connection already established")
                 return
             request = GATTRequest(None, None, None, dest_addr=addr)

@@ -116,7 +116,7 @@ class BLEConnectionManager(object):
             self.our_address_type = PUBLIC_DEVICE_ADDRESS
 
         if self.our_address_type == RANDOM_DEVICE_ADDRESS and random_address is None:
-            self.random_address = ':'.join(map(lambda x: x.encode('hex'), os.urandom(6)))
+            self.random_address = ':'.join([x.encode('hex') for x in os.urandom(6)])
         elif self.our_address_type == RANDOM_DEVICE_ADDRESS:
             self.random_address = random_address
         else:
@@ -536,7 +536,7 @@ class BLEConnectionManager(object):
         """
         import blesuite.utils.validators as validator
         for entry in long_term_key_database:
-            keys = entry.keys()
+            keys = list(entry.keys())
             if 'address' in keys:
                 peer_address = entry['address'].decode('hex')
             else:
@@ -795,8 +795,8 @@ class BLEConnectionManager(object):
         self.start_advertising()
         while self.is_advertising():
             gevent.sleep(1)
-        if len(self.stack_connection.connection_statuses.keys()) > 0:
-            connection_handle = self.stack_connection.connection_statuses.keys()[0]
+        if len(list(self.stack_connection.connection_statuses.keys())) > 0:
+            connection_handle = list(self.stack_connection.connection_statuses.keys())[0]
             peer_address = self.stack_connection.peer_addresses_by_connection_handle[connection_handle]
             peer_address_type = self.stack_connection.connected_addr_type_by_connection_handle[connection_handle]
             return True, BLEConnection(peer_address, peer_address_type, connection_handle=connection_handle)
@@ -941,7 +941,7 @@ class BLEConnectionManager(object):
         :return:
         :rtype:
         """
-        from pybt.gatt import GATTService, GATTCharacteristic, GATTCharacteristicDescriptorDeclaration,\
+        from .pybt.gatt import GATTService, GATTCharacteristic, GATTCharacteristicDescriptorDeclaration,\
                               GATTInclude, UUID
 
         if self.gatt_server is None:

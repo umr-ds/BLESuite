@@ -77,7 +77,7 @@ class BLECharacteristic(object):
         :rtype: str
         """
         permission = ""
-        for perm in Permissions.permission_dict.keys():
+        for perm in list(Permissions.permission_dict.keys()):
             if self.gatt_properties & perm == perm:
                 if len(permission) == 0:
                     permission += Permissions.permission_dict[perm]
@@ -318,7 +318,7 @@ class BLECharacteristic(object):
             return
         type_int = int(self.uuid[:8], 16)
         self.type = type_int
-        if type_int in type_dict.keys():
+        if type_int in list(type_dict.keys()):
             self.type_string = type_dict[type_int]
 
     def get_type_string(self):
@@ -358,7 +358,7 @@ class BLECharacteristic(object):
         characteristic_dict['value'] = self.value
 
         gatt_properties = []
-        for perm in Permissions.permission_dict.keys():
+        for perm in list(Permissions.permission_dict.keys()):
             if self.gatt_properties & perm == perm:
                 gatt_properties.append(Permissions.permission_dict[perm].lower())
         characteristic_dict['gatt_properties'] = gatt_properties
@@ -432,7 +432,7 @@ class BLECharacteristic(object):
         """
         import blesuite.utils.validators as validator
 
-        characteristic_attributes = characteristic_dictionary.keys()
+        characteristic_attributes = list(characteristic_dictionary.keys())
 
         if 'uuid' in characteristic_attributes:
             uuid = validator.validate_attribute_uuid(characteristic_dictionary['uuid'])
@@ -483,7 +483,7 @@ class BLECharacteristic(object):
 
         if 'characteristic_definition_attribute_read_permission' in characteristic_attributes:
             permission_dictionary = characteristic_dictionary['characteristic_definition_attribute_read_permission']
-            permission_keys = permission_dictionary.keys()
+            permission_keys = list(permission_dictionary.keys())
             if "security_mode" not in permission_keys:
                 mode = None
             else:
@@ -498,7 +498,7 @@ class BLECharacteristic(object):
 
         if 'characteristic_definition_attribute_write_permission' in characteristic_attributes:
             permission_dictionary = characteristic_dictionary['characteristic_definition_attribute_write_permission']
-            permission_keys = permission_dictionary.keys()
+            permission_keys = list(permission_dictionary.keys())
             if "security_mode" not in permission_keys:
                 mode = None
             else:
@@ -531,7 +531,7 @@ class BLECharacteristic(object):
 
         if 'characteristic_value_attribute_read_permission' in characteristic_attributes:
             permission_dictionary = characteristic_dictionary['characteristic_value_attribute_read_permission']
-            permission_keys = permission_dictionary.keys()
+            permission_keys = list(permission_dictionary.keys())
             if "security_mode" not in permission_keys:
                 mode = None
             else:
@@ -546,7 +546,7 @@ class BLECharacteristic(object):
 
         if 'characteristic_value_attribute_write_permission' in characteristic_attributes:
             permission_dictionary = characteristic_dictionary['characteristic_value_attribute_write_permission']
-            permission_keys = permission_dictionary.keys()
+            permission_keys = list(permission_dictionary.keys())
             if "security_mode" not in permission_keys:
                 mode = None
             else:

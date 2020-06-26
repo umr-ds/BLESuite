@@ -102,7 +102,7 @@ class BLEInclude(object):
             return
         type_int = int(self.included_service_uuid[:8], 16)
         self.type = type_int
-        if type_int in type_dict.keys():
+        if type_int in list(type_dict.keys()):
             self.type_string = type_dict[type_int]
 
     def get_type_string(self):
@@ -170,7 +170,7 @@ class BLEInclude(object):
         """
         import blesuite.utils.validators as validator
 
-        include_attributes = include_dictionary.keys()
+        include_attributes = list(include_dictionary.keys())
 
         if 'included_service_uuid' in include_attributes:
             uuid = validator.validate_attribute_uuid(include_dictionary['included_service_uuid'])
@@ -215,7 +215,7 @@ class BLEInclude(object):
 
         if 'include_definition_attribute_read_permission' in include_attributes:
             permission_dictionary = include_dictionary['include_definition_attribute_read_permission']
-            permission_keys = permission_dictionary.keys()
+            permission_keys = list(permission_dictionary.keys())
             if "security_mode" not in permission_keys:
                 mode = None
             else:
@@ -231,7 +231,7 @@ class BLEInclude(object):
 
         if 'include_definition_attribute_write_permission' in include_attributes:
             permission_dictionary = include_dictionary['include_definition_attribute_write_permission']
-            permission_keys = permission_dictionary.keys()
+            permission_keys = list(permission_dictionary.keys())
             if "security_mode" not in permission_keys:
                 mode = None
             else:

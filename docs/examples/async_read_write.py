@@ -37,9 +37,9 @@ with BLEConnectionManager(adapter, role) as connection_manager:
         gevent.sleep(1)
 
     if read_request.has_response():
-        print "Got response:", read_request.response.data, "from handle", hex(read_request.handle)
+        print("Got response:", read_request.response.data, "from handle", hex(read_request.handle))
     elif read_request.has_error():
-        print "Got error:", read_request.get_error_message()
+        print("Got error:", read_request.get_error_message())
     else:
-        print "Our custom timeout was reached"
+        print("Our custom timeout was reached")
     # Not printing write request response. Either an error or a confirmation.

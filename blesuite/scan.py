@@ -21,7 +21,7 @@ def blesuite_scan_main(timeout, adapter):
     :return: Discovered devices ({<address>:(<addressType>, <data>)})
     :rtype: dict
     """
-    from connection_manager import BLEConnectionManager
+    from .connection_manager import BLEConnectionManager
     if timeout < 0:
         raise Exception("%s is an invalid scan timeout value. The timeout must be a positive integer" % timeout)
 

@@ -39,7 +39,7 @@ def decode_uuid128(uuids):
     res = []
     for i in range(0, len(uuids), 16):
         r = uuids[i:i + 16][::-1]
-        res.append('-'.join(map(lambda x: hexlify(x), (r[0:4], r[4:6], r[6:8], r[8:10], r[10:]))))
+        res.append('-'.join([hexlify(x) for x in (r[0:4], r[4:6], r[6:8], r[8:10], r[10:])]))
     return res
 
 
@@ -52,7 +52,7 @@ def decode_tx_power_level(power):
 def decode_slave_connection_interval_range(range):
     if len(range) != 4:
         raise Exception("Range must be 4 bytes")
-    return map(lambda x: '%g ms' % (unpack('<H', x)[0] * 1.25,), (range[0:2], range[2:]))
+    return ['%g ms' % (unpack('<H', x)[0] * 1.25,) for x in (range[0:2], range[2:])]
 
 
 def decode_name(data):
@@ -1752,7 +1752,7 @@ class GAP:
             t = self.types.get(type, '%02X' % type)
             decoder = self.decoder.get(type, lambda x: repr(x))
             pretty.append('%s: %s' % (t, decoder(value)))
-            if t not in gap.keys():
+            if t not in list(gap.keys()):
                 gap[t] = decoder(value)
             else:
                 cur_val = gap[t]

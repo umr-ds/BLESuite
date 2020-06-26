@@ -435,13 +435,13 @@ class Server:
             ))
             return (False, e.code)
         resp_body = ""
-        print handle
-        print offset
-        print value
+        print(handle)
+        print(offset)
+        print(value)
         resp_body += pack('<H', handle)
         resp_body += pack('<H', offset)
         resp_body += value
-        print "returning success"
+        print("returning success")
         return (True, resp_body)
 
     def execute_write(self, flags):
@@ -654,7 +654,7 @@ class UUID:
             self.type = UUID.TYPE_16
         elif len(uuid) == 16:
             r = uuid[::-1]
-            self.uuid = '-'.join(map(lambda x: hexlify(x), (r[0:4], r[4:6], r[6:8], r[8:10], r[10:])))
+            self.uuid = '-'.join([hexlify(x) for x in (r[0:4], r[4:6], r[6:8], r[8:10], r[10:])])
             self.packed = uuid
             self.type = UUID.TYPE_128
 
@@ -1199,7 +1199,7 @@ class AttributeDatabase:
 
     def read(self, handle, connection_permission, is_connection_encrypted):
         attr = None
-        if handle in self.attributes.keys():
+        if handle in list(self.attributes.keys()):
             attr = self.attributes[handle]
             self.att_security_checks(ATT_PROP_READ, handle, attr.properties,
                                      attr.sec_mode_read, attr.sec_mode_write,
@@ -1210,12 +1210,12 @@ class AttributeDatabase:
     # TODO: Allow user controlled maximum value for queued data to prevent resource exhaustion
     def prepare_write(self, handle, offset, data, connection_permission, is_connection_encrypted):
         # need authn and authz checks here
-        if handle in self.attributes.keys():
+        if handle in list(self.attributes.keys()):
             attr = self.attributes[handle]
             self.att_security_checks(ATT_PROP_WRITE, handle, attr.properties,
                                      attr.sec_mode_read, attr.sec_mode_write,
                                      connection_permission, attr.require_authorization, is_connection_encrypted)
-            if handle in self.prepared_write_queue.keys():
+            if handle in list(self.prepared_write_queue.keys()):
                 value = self.prepared_write_queue[handle]
                 if offset > len(value):
                     raise ATTInvalidOffsetException
@@ -1235,14 +1235,14 @@ class AttributeDatabase:
         if action == 0x00:
             self.prepared_write_queue = {}
         elif action == 0x01:
-            for handle in self.prepared_write_queue.keys():
+            for handle in list(self.prepared_write_queue.keys()):
                 self.attributes[handle].value = self.prepared_write_queue[handle]
             self.prepared_write_queue = {}
 
     def write(self, handle, data, connection_permission, is_connection_encrypted):
         # TODO: Allow user to set maximum value size for attributes?
         success = True
-        if handle in self.attributes.keys():
+        if handle in list(self.attributes.keys()):
             attr = self.attributes[handle]
             self.att_security_checks(ATT_PROP_WRITE, handle, attr.properties,
                                      attr.sec_mode_read, attr.sec_mode_write,
@@ -1257,7 +1257,7 @@ class AttributeDatabase:
             raise ATTInvalidHandleException
         resp = []
         uuid = UUID(uuid_str)
-        attr_handles = self.attributes.keys()
+        attr_handles = list(self.attributes.keys())
         for i in range(start, end + 1):
             if i in attr_handles:
                 attr = self.attributes[i]
@@ -1274,7 +1274,7 @@ class AttributeDatabase:
         if start > end or start == 0x0000:
             raise ATTInvalidHandleException
         resp = []
-        attr_handles = self.attributes.keys()
+        attr_handles = list(self.attributes.keys())
         for i in range(start, end + 1):
             if i in attr_handles:
                 resp.append((i, self.attributes[i].uuid))
@@ -1287,7 +1287,7 @@ class AttributeDatabase:
             raise ATTInvalidHandleException
         resp = []
         uuid = UUID(uuid_str)
-        attr_handles = self.attributes.keys()
+        attr_handles = list(self.attributes.keys())
         for i in range(start, end + 1):
             if i in attr_handles:
                 attr = self.attributes[i]
@@ -1315,7 +1315,7 @@ class AttributeDatabase:
         uuid = UUID(uuid_str)
         log.debug("AttributeDB - Received read by group type request. start: %d, end: %d, uuid: %s" %
                   (start, end, pack(">H", uuid_str).encode('hex')))
-        attr_handles = self.attributes.keys()
+        attr_handles = list(self.attributes.keys())
         for i in range(start, end + 1):
             if i in attr_handles:
                 attr = self.attributes[i]
@@ -1341,14 +1341,14 @@ class AttributeDatabase:
 
     def debug_print_db(self):
 
-        print "Attribute Database"
-        print "Handle\t| Attribute Data"
-        print "=================="
-        for key in self.attributes.keys():
+        print("Attribute Database")
+        print("Handle\t| Attribute Data")
+        print("==================")
+        for key in list(self.attributes.keys()):
             att = self.attributes[key]
-            print "{}\t{} (0x{})".format(str(key), att.uuid.uuid, str(att.uuid.packed).encode('hex'))
-            print "\t " + "properties: " + hex(att.properties)
-            print "\t " + "read security mode: ", att.sec_mode_read.security_mode, " level: ", att.sec_mode_read.security_level
-            print "\t " + "write security mode: ", att.sec_mode_write.security_mode, " level: ", att.sec_mode_write.security_level
-            print "\t " + "authz required: ", att.require_authorization
-            print "\t " + "value: ", repr(att.value), "hex encoded: ", str(att.value).encode('hex')
+            print("{}\t{} (0x{})".format(str(key), att.uuid.uuid, str(att.uuid.packed).encode('hex')))
+            print("\t " + "properties: " + hex(att.properties))
+            print("\t " + "read security mode: ", att.sec_mode_read.security_mode, " level: ", att.sec_mode_read.security_level)
+            print("\t " + "write security mode: ", att.sec_mode_write.security_mode, " level: ", att.sec_mode_write.security_level)
+            print("\t " + "authz required: ", att.require_authorization)
+            print("\t " + "value: ", repr(att.value), "hex encoded: ", str(att.value).encode('hex'))
